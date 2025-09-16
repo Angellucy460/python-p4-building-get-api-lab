@@ -1,25 +1,22 @@
-#!/usr/bin/env python3
-
-from random import choice as rc
-
-from app import app
-from models import db, Bakery, BakedGood
+from app import app, db, Bakery, BakedGood
 
 with app.app_context():
+    print("🌱 Seeding database...")
 
-    BakedGood.query.delete()
-    Bakery.query.delete()
-    
-    bakeries = []
-    bakeries.append(Bakery(name='Delightful donuts'));
-    bakeries.append(Bakery(name='Incredible crullers'));
-    db.session.add_all(bakeries)
+    db.drop_all()
+    db.create_all()
 
-    baked_goods = []
-    baked_goods.append(BakedGood(name='Chocolate dipped donut', price=2.75, bakery=bakeries[0]));
-    baked_goods.append(BakedGood(name='Apple-spice filled donut', price=3.50, bakery=bakeries[0]));
-    baked_goods.append(BakedGood(name='Glazed honey cruller', price=3.25, bakery=bakeries[1]));
-    baked_goods.append(BakedGood(name='Chocolate cruller', price=3.40, bakery=bakeries[1]));
-
-    db.session.add_all(baked_goods)
+    # Create one bakery
+    bakery1 = Bakery(name="Test Bakery")
+    db.session.add(bakery1)
     db.session.commit()
+
+    # Add baked goods
+    bg1 = BakedGood(name="Croissant", price=3, bakery_id=bakery1.id)
+    bg2 = BakedGood(name="Baguette", price=5, bakery_id=bakery1.id)
+    bg3 = BakedGood(name="Cake", price=10, bakery_id=bakery1.id)
+
+    db.session.add_all([bg1, bg2, bg3])
+    db.session.commit()
+
+    print("✅ Done seeding!")
